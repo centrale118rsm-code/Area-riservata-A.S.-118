@@ -28,11 +28,6 @@
             --text-sec: #64748b;
             --border: #e2e8f0;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            
-            /* Colori Ruota */
-            --wheel-color-1: #2563eb; /* Blu */
-            --wheel-color-2: #dc2626; /* Rosso */
-            --wheel-text: #ffffff;
         }
 
         body {
@@ -131,7 +126,6 @@
         .card-richieste .card-icon-wrapper { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
         .card-veicoli .card-icon-wrapper { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
         .card-turni .card-icon-wrapper { background: #dbeafe; color: #2563eb; border: 1px solid #93c5fd; }
-        /* Nuova card Viola per la ruota */
         .card-ruota .card-icon-wrapper { background: #e0cffc; color: #6f42c1; border: 1px solid #c29ffa; }
 
         /* --- MODALE RUOTA DELLA FORTUNA --- */
@@ -149,26 +143,25 @@
         .wheel-header h2 { font-size: 1.1rem; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; }
         .btn-close-wheel {
             background: #f1f5f9; border: none; color: var(--text-sec); width: 36px; height: 36px;
-            border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10001;
         }
 
-        .wheel-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .wheel-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
 
         /* Area Selezione Autisti */
-        .selection-area { width: 100%; max-width: 400px; background: #fff; border-radius: 20px; padding: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .selection-area { width: 100%; max-width: 400px; background: #fff; border-radius: 20px; padding: 16px; border: 1px solid var(--border); margin-bottom: 20px; z-index: 10; }
         .selection-title { font-size: 0.75rem; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; text-align: center; }
         
         .driver-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .driver-option {
-            background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;
+            background: var(--bg); border: 2px solid var(--border); border-radius: 12px; padding: 10px 12px;
             display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;
         }
-        .driver-option.active { background: #dbeafe; border-color: #93c5fd; }
-        .driver-option span { font-weight: 700; font-size: 0.85rem; color: var(--text-main); }
-        .driver-option.active span { color: var(--primary-dark); }
+        .driver-option.active { background: #fff; }
+        .driver-option span { font-weight: 800; font-size: 0.85rem; color: var(--text-main); transition: color 0.2s; }
         
         /* Checkbox switch stilizzato */
-        .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 20px; pointer-events: none; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1;
@@ -178,16 +171,15 @@
             position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
             background-color: white; transition: .3s; border-radius: 50%;
         }
-        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider { background-color: #22c55e; }
         input:checked + .slider:before { transform: translateX(14px); }
 
         /* Area Ruota Grafica */
         .wheel-container {
             position: relative; width: 320px; height: 320px; margin-bottom: 24px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center; z-index: 10;
         }
         
-        /* L'indicatore/freccia in alto */
         .wheel-pointer {
             position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
             width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent;
@@ -198,12 +190,12 @@
             width: 300px; height: 300px; border-radius: 50%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 0 0 8px #fff;
             border: 4px solid #fff;
-            transition: transform 0.1s linear; /* per l'animazione fluida */
+            background: #f1f5f9;
         }
 
         .btn-spin {
             background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-            color: white; border: none; padding: 16px 40px; border-radius: 50px;
+            color: white; border: none; padding: 16px 40px; border-radius: 50px; z-index: 10;
             font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
             cursor: pointer; box-shadow: 0 8px 20px rgba(30,58,138,0.4);
             transition: all 0.2s;
@@ -213,15 +205,65 @@
 
         /* Risultato */
         #winner-display {
-            margin-top: 20px; text-align: center; min-height: 60px;
+            margin-top: 20px; text-align: center; min-height: 60px; z-index: 10;
             padding: 15px; border-radius: 15px; width: 100%; max-width: 320px;
+            border: 2px solid transparent; transition: all 0.3s;
         }
-        #winner-display.show { background: #dcfce7; border: 2px solid #86efac; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #winner-display.show { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        .winner-label { font-size: 0.7rem; font-weight: 800; color: #16a34a; text-transform: uppercase; letter-spacing: 1px; }
-        .winner-name { font-size: 1.6rem; font-weight: 900; color: #15803d; letter-spacing: -1px; }
+        .winner-label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .winner-name { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; text-shadow: 0px 2px 4px rgba(0,0,0,0.1); }
 
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* --- ANIMAZIONE EASTER EGG (I PELATI) --- */
+        .bald-man {
+            position: fixed;
+            bottom: -150px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none; /* Per non cliccarli per sbaglio */
+            animation: jumpAndFly 4s ease-in-out forwards;
+        }
+        .bald-speech {
+            background: #ffffff;
+            color: #0f172a;
+            padding: 8px 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            border: 2px solid #cbd5e1;
+            text-align: center;
+            max-width: 140px;
+            position: relative;
+        }
+        .bald-speech::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: #ffffff transparent transparent transparent;
+        }
+        .bald-emoji {
+            font-size: 65px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+        }
+
+        @keyframes jumpAndFly {
+            0% { transform: translateY(0) scale(0.5) rotate(-15deg); opacity: 0; }
+            10% { opacity: 1; }
+            30% { transform: translateY(-50vh) scale(1.2) rotate(20deg); }
+            50% { transform: translateY(-40vh) scale(1) rotate(-10deg); }
+            70% { transform: translateY(-80vh) scale(1.1) rotate(15deg); opacity: 1; }
+            100% { transform: translateY(-120vh) scale(1); opacity: 0; }
+        }
 
     </style>
 </head>
@@ -275,7 +317,7 @@
                 <div class="desc">Cambi turno, ferie, permessi e comunicazioni.</div>
             </a>
 
-            <a href="https://centrale118rsm-code.github.io/Gestione-Veicoli/index.html" class="menu-card card-veicoli">
+            <a href="https://centrale118rsm-code.github.io/Veicoli-118/" class="menu-card card-veicoli">
                 <div class="card-icon-wrapper">
                     <span class="material-icons-round" style="font-size: 26px;">airport_shuttle</span>
                 </div>
@@ -300,7 +342,6 @@
             </div>
 
         </div>
-
     </div>
 
     <div id="wheel-modal">
@@ -314,7 +355,7 @@
         <div class="wheel-content">
             
             <div class="selection-area">
-                <div class="selection-title">Seleziona Autisti da includere</div>
+                <div class="selection-title">Seleziona Autisti per l'estrazione</div>
                 <div class="driver-grid" id="driver-selection-list">
                     </div>
             </div>
@@ -324,7 +365,7 @@
                 <canvas id="wheel-canvas" width="600" height="600"></canvas>
             </div>
 
-            <button class="btn-spin" id="spin-button" onclick="spinWheel()">GIRA!</button>
+            <button class="btn-spin" id="spin-button" onclick="spinWheel()">GIRA LA RUOTA!</button>
 
             <div id="winner-display">
                 </div>
@@ -333,8 +374,8 @@
     </div>
 
     <script>
-        // --- LOGICA LOGIN ---
-        const PWD_CORRETTA = "autisti2026";
+        // --- LOGICA LOGIN (Nuova Password: 118) ---
+        const PWD_CORRETTA = "118";
         const KEY_ACCESSO = "hub_118_auth";
 
         window.onload = () => {
@@ -343,7 +384,6 @@
             } else {
                 document.getElementById('pwd-input').focus();
             }
-            // Inizializza la lista dei driver nella ruota
             populateDriverSelection();
             drawWheel();
         };
@@ -375,21 +415,35 @@
             }
         }
 
+
         // --- LOGICA RUOTA DELLA FORTUNA ---
         
         // Lista completa autisti
         const allDrivers = ["Paz", "Yan", "Barbi", "F'bs", "Michy", "Fiffi", "Pilù", "Sgangher", "Stebia"];
         
-        // Stato: quali autisti sono selezionati (inizialmente tutti)
-        let selectedDrivers = [...allDrivers];
+        // Palette di colori univoci per ogni autista
+        const wheelColors = [
+            '#2563eb', // Blu
+            '#dc2626', // Rosso
+            '#16a34a', // Verde
+            '#d97706', // Giallo/Arancio
+            '#9333ea', // Viola
+            '#0891b2', // Ciano
+            '#db2777', // Rosa
+            '#ea580c', // Arancione scuro
+            '#65a30d'  // Verde Lime
+        ];
+        
+        // Stato: Partiamo con NESSUN autista selezionato
+        let selectedDrivers = [];
 
         // Variabili per l'animazione
         let canvas = document.getElementById("wheel-canvas");
         let ctx = canvas.getContext("2d");
-        let currentAngle = 0; // Angolo attuale della ruota
+        let currentAngle = 0; 
         let isSpinning = false;
         let spinSpeed = 0;
-        let friction = 0.985; // Attrito per rallentare (più vicino a 1 = gira di più)
+        let friction = 0.985; 
         let stopThreshold = 0.002;
 
         // Popola la griglia di checkbox
@@ -397,23 +451,26 @@
             const container = document.getElementById('driver-selection-list');
             container.innerHTML = '';
 
-            allDrivers.forEach(driver => {
+            allDrivers.forEach((driver, index) => {
                 const isChecked = selectedDrivers.includes(driver);
+                const driverColor = wheelColors[index];
                 
                 const optionDiv = document.createElement('div');
                 optionDiv.className = `driver-option ${isChecked ? 'active' : ''}`;
                 optionDiv.id = `option-${driver}`;
+                
+                if(isChecked) optionDiv.style.borderColor = driverColor;
+
                 optionDiv.onclick = (e) => {
-                    // Evita il trigger doppio se clicchi sullo slider
                     if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN' && e.target.className !== 'slider') {
-                        toggleDriver(driver);
+                        toggleDriver(driver, driverColor);
                     }
                 };
 
                 optionDiv.innerHTML = `
-                    <span>${driver}</span>
+                    <span style="color: ${isChecked ? driverColor : 'var(--text-main)'}">${driver}</span>
                     <label class="switch">
-                        <input type="checkbox" id="check-${driver}" ${isChecked ? 'checked' : ''} onchange="toggleDriver('${driver}')">
+                        <input type="checkbox" id="check-${driver}" ${isChecked ? 'checked' : ''} onchange="toggleDriver('${driver}', '${driverColor}')">
                         <span class="slider"></span>
                     </label>
                 `;
@@ -422,24 +479,25 @@
         }
 
         // Attiva/Disattiva un autista
-        function toggleDriver(driver) {
+        function toggleDriver(driver, color) {
             const checkbox = document.getElementById(`check-${driver}`);
             const optionDiv = document.getElementById(`option-${driver}`);
+            const spanText = optionDiv.querySelector('span');
             
-            // Se l'evento arriva dal div, sincronizza il checkbox
-            if (event.target.tagName !== 'INPUT') {
-                checkbox.checked = !checkbox.checked;
-            }
+            if (event.target.tagName !== 'INPUT') checkbox.checked = !checkbox.checked;
 
             if (checkbox.checked) {
                 if (!selectedDrivers.includes(driver)) selectedDrivers.push(driver);
                 optionDiv.classList.add('active');
+                optionDiv.style.borderColor = color;
+                spanText.style.color = color;
             } else {
                 selectedDrivers = selectedDrivers.filter(d => d !== driver);
                 optionDiv.classList.remove('active');
+                optionDiv.style.borderColor = 'var(--border)';
+                spanText.style.color = 'var(--text-main)';
             }
             
-            // Reset risultato precedente e ridisegna
             resetWinnerDisplay();
             drawWheel();
             if(navigator.vibrate) navigator.vibrate(20);
@@ -450,20 +508,28 @@
             const numSegments = selectedDrivers.length;
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-            const radius = centerX - 10; // Leggero margine
+            const radius = centerX - 10; 
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             if (numSegments === 0) {
-                // Messaggio se nessuno è selezionato
                 ctx.save();
                 ctx.translate(centerX, centerY);
-                ctx.font = 'bold 30px Inter';
-                ctx.fillStyle = '#64748b';
+                ctx.font = '900 28px Inter';
+                ctx.fillStyle = '#94a3b8';
                 ctx.textAlign = 'center';
-                ctx.fillText("Seleziona", 0, -15);
-                ctx.fillText("Autisti", 0, 25);
+                ctx.fillText("NESSUN", 0, -15);
+                ctx.fillText("AUTISTA", 0, 25);
                 ctx.restore();
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI);
+                ctx.fillStyle = '#f1f5f9';
+                ctx.fill();
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.stroke();
+                ctx.closePath();
                 return;
             }
 
@@ -472,50 +538,63 @@
             selectedDrivers.forEach((driver, i) => {
                 const angle = currentAngle + i * arcSize;
                 
-                // 1. Disegna lo spicchio
+                const originalIndex = allDrivers.indexOf(driver);
+                const sliceColor = wheelColors[originalIndex];
+                
                 ctx.beginPath();
-                ctx.fillStyle = (i % 2 === 0) ? '#2563eb' : '#dc2626'; // Alterna Blu e Rosso 118
+                ctx.fillStyle = sliceColor;
                 ctx.moveTo(centerX, centerY);
                 ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
                 ctx.lineTo(centerX, centerY);
                 ctx.fill();
+                
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
                 ctx.closePath();
 
-                // 2. Aggiungi il testo (Nome)
                 ctx.save();
                 ctx.translate(centerX, centerY);
-                // Ruota il contesto per scrivere dritto dentro lo spicchio
                 ctx.rotate(angle + arcSize / 2);
                 
                 ctx.textAlign = "right";
                 ctx.fillStyle = "#ffffff";
-                // Dimensione font dinamica in base a quanti spicchi ci sono
+                
                 let fontSize = 32;
-                if (numSegments > 6) fontSize = 26;
-                if (numSegments > 9) fontSize = 22;
+                if (numSegments > 5) fontSize = 26;
+                if (numSegments > 7) fontSize = 22;
                 
                 ctx.font = `900 ${fontSize}px Inter`;
+                ctx.shadowColor = "rgba(0,0,0,0.3)";
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
                 
-                // Scrivi il nome spostato verso l'esterno
-                ctx.fillText(driver, radius - 30, 10);
+                ctx.fillText(driver, radius - 35, 8);
                 ctx.restore();
             });
             
-            // Disegna cerchio centrale decorativo
             ctx.beginPath();
-            ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
+            ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
             ctx.fill();
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 5;
             ctx.strokeStyle = '#0f172a';
             ctx.stroke();
+            ctx.closePath();
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
             ctx.closePath();
         }
 
         // Avvia la rotazione
         function spinWheel() {
             if (isSpinning || selectedDrivers.length < 2) {
-                if(selectedDrivers.length < 2) alert("Seleziona almeno 2 autisti per girare!");
+                if(selectedDrivers.length === 0) alert("Devi selezionare almeno 2 autisti!");
+                else if(selectedDrivers.length === 1) alert("Seleziona almeno un altro autista, così è troppo facile!");
                 return;
             }
             
@@ -523,26 +602,18 @@
             isSpinning = true;
             document.getElementById('spin-button').disabled = true;
             
-            // Velocità iniziale casuale alta (tra 0.3 e 0.6 radianti per frame)
             spinSpeed = Math.random() * 0.3 + 0.4;
-            
             if(navigator.vibrate) navigator.vibrate([30, 30, 30]);
 
             animateSpin();
         }
 
-        // Ciclo di animazione
         function animateSpin() {
             if (!isSpinning) return;
-
-            // Aggiorna angolo basato sulla velocità
             currentAngle += spinSpeed;
-            // Applica attrito
             spinSpeed *= friction;
-
             drawWheel();
 
-            // Controllo arresto
             if (spinSpeed < stopThreshold) {
                 stopSpin();
             } else {
@@ -550,7 +621,6 @@
             }
         }
 
-        // Ferma la ruota e calcola vincitore
         function stopSpin() {
             isSpinning = false;
             spinSpeed = 0;
@@ -559,34 +629,30 @@
             const numSegments = selectedDrivers.length;
             const arcSize = (2 * Math.PI) / numSegments;
 
-            // Normalizza l'angolo attuale tra 0 e 2PI
             let normalizedAngle = currentAngle % (2 * Math.PI);
             if (normalizedAngle < 0) normalizedAngle += (2 * Math.PI);
-
-            // Il puntatore è in alto (angolo = -PI/2 o 3PI/2). 
-            // Dobbiamo calcolare quale spicchio si trova sotto il puntatore.
-            // La logica è: l'angolo 0 del canvas è a destra (est). Il puntatore è a Nord.
-            // Quindi cerchiamo lo spicchio all'angolo (3/2 PI - normalizedAngle)
             
             let winningIndex = Math.floor(((3 * Math.PI / 2) - normalizedAngle) / arcSize);
-            
-            // Correggi l'indice se negativo
             winningIndex = (winningIndex % numSegments + numSegments) % numSegments;
             
             const winner = selectedDrivers[winningIndex];
-            displayWinner(winner);
+            const originalIndex = allDrivers.indexOf(winner);
+            const winnerColor = wheelColors[originalIndex];
             
-            // Evidenzia visivamente lo spicchio vincente (opzionale, ridisegnando con opacità)
-            // Per ora usiamo vibrazione e display
+            displayWinner(winner, winnerColor);
+            triggerBaldMenEasterEgg(); // Avvia i pelati!
+            
             if(navigator.vibrate) navigator.vibrate([100, 50, 300]);
         }
 
-        function displayWinner(name) {
+        function displayWinner(name, color) {
             const display = document.getElementById('winner-display');
             display.innerHTML = `
-                <div class="winner-label">Il destino ha scelto:</div>
-                <div class="winner-name">${name}</div>
+                <div class="winner-label" style="color: ${color}">Il destino ha scelto:</div>
+                <div class="winner-name" style="color: ${color}">${name}</div>
             `;
+            display.style.backgroundColor = color + "15"; 
+            display.style.borderColor = color;
             display.classList.add('show');
         }
 
@@ -594,25 +660,74 @@
             const display = document.getElementById('winner-display');
             display.innerHTML = '';
             display.classList.remove('show');
+            display.style.backgroundColor = 'transparent';
+            display.style.borderColor = 'transparent';
         }
 
-        // Gestione apertura/chiusura modale
         function openWheelModal() {
             document.getElementById('wheel-modal').classList.add('open');
-            // Blocca lo scroll del body sotto
             document.body.style.overflow = 'hidden';
             resetWinnerDisplay();
-            drawWheel(); // Ridisegna per sicurezza
+            drawWheel(); 
             if(navigator.vibrate) navigator.vibrate(30);
         }
 
         function closeWheelModal() {
-            // Se sta girando, non chiudere
             if(isSpinning) return;
             document.getElementById('wheel-modal').classList.remove('open');
-            // Riattiva lo scroll del body
             document.body.style.overflow = '';
             if(navigator.vibrate) navigator.vibrate(30);
+        }
+
+        // --- EASTER EGG (Invasione dei Pelati) ---
+        function triggerBaldMenEasterEgg() {
+            const funnyPhrases = [
+                "Caffè pagato dal vincitore!",
+                "Ho perso i capelli per questi turni!",
+                "Sono aerodinamico per l'ambulanza!",
+                "Chi mi ha rubato lo shampoo?!",
+                "Lucido come una palla da biliardo!",
+                "Attenzione al riflesso accecante!",
+                "Mettimi un po' di crema solare!",
+                "Tocca a te guidare stanotte!",
+                "La mia testa brilla nel buio!"
+            ];
+
+            // Genera tra 6 e 10 pelati
+            const numMen = 6 + Math.floor(Math.random() * 5); 
+
+            for(let i = 0; i < numMen; i++) {
+                // Crea un ritardo casuale in modo che non escano tutti insieme
+                setTimeout(() => {
+                    const man = document.createElement('div');
+                    man.className = 'bald-man';
+                    
+                    // Posizione orizzontale casuale (dal 5% al 85% dello schermo)
+                    const leftPos = 5 + Math.random() * 80; 
+                    man.style.left = `${leftPos}%`;
+                    
+                    // Durata dell'animazione casuale per sfasare i salti (tra 3.5s e 5.5s)
+                    const duration = 3.5 + Math.random() * 2;
+                    man.style.animationDuration = `${duration}s`;
+
+                    // Scegli una frase a caso
+                    const phrase = funnyPhrases[Math.floor(Math.random() * funnyPhrases.length)];
+
+                    man.innerHTML = `
+                        <div class="bald-speech">${phrase}</div>
+                        <div class="bald-emoji">👨‍🦲</div>
+                    `;
+
+                    // Li appendiamo dentro il modale così si vedono in sovraimpressione alla ruota
+                    document.getElementById('wheel-modal').appendChild(man);
+
+                    // Pulizia: Rimuovi il pelato dal codice HTML dopo che l'animazione è finita
+                    setTimeout(() => {
+                        man.remove();
+                    }, duration * 1000);
+
+                }, Math.random() * 1200); // Ritardo di comparsa scaglionato
+            }
         }
 
     </script>
