@@ -122,7 +122,6 @@
         .menu-card .title { font-weight: 800; color: var(--text-main); font-size: 0.95rem; margin-bottom: 4px; line-height: 1.2; }
         .menu-card .desc { font-size: 0.68rem; color: var(--text-sec); font-weight: 500; line-height: 1.3; }
 
-        /* Colori specifici delle card */
         .card-richieste .card-icon-wrapper { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
         .card-veicoli .card-icon-wrapper { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
         .card-turni .card-icon-wrapper { background: #dbeafe; color: #2563eb; border: 1px solid #93c5fd; }
@@ -148,7 +147,6 @@
 
         .wheel-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
 
-        /* Area Selezione Autisti */
         .selection-area { width: 100%; max-width: 400px; background: #fff; border-radius: 20px; padding: 16px; border: 1px solid var(--border); margin-bottom: 20px; z-index: 10; }
         .selection-title { font-size: 0.75rem; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; text-align: center; }
         
@@ -160,7 +158,6 @@
         .driver-option.active { background: #fff; }
         .driver-option span { font-weight: 800; font-size: 0.85rem; color: var(--text-main); transition: color 0.2s; }
         
-        /* Checkbox switch stilizzato */
         .switch { position: relative; display: inline-block; width: 34px; height: 20px; pointer-events: none; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -174,7 +171,6 @@
         input:checked + .slider { background-color: #22c55e; }
         input:checked + .slider:before { transform: translateX(14px); }
 
-        /* Area Ruota Grafica */
         .wheel-container {
             position: relative; width: 320px; height: 320px; margin-bottom: 24px;
             display: flex; align-items: center; justify-content: center; z-index: 10;
@@ -203,7 +199,6 @@
         .btn-spin:active { transform: scale(0.95); box-shadow: 0 4px 10px rgba(30,58,138,0.4); }
         .btn-spin:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
 
-        /* Risultato */
         #winner-display {
             margin-top: 20px; text-align: center; min-height: 60px; z-index: 10;
             padding: 15px; border-radius: 15px; width: 100%; max-width: 320px;
@@ -216,16 +211,15 @@
 
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* --- ANIMAZIONE EASTER EGG (I PELATI) --- */
+        /* --- ANIMAZIONE EASTER EGG (CAOS IN CENTRALE) --- */
         .bald-man {
             position: fixed;
-            bottom: -150px;
             z-index: 10000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            pointer-events: none; /* Per non cliccarli per sbaglio */
-            animation: jumpAndFly 4s ease-in-out forwards;
+            pointer-events: none;
+            opacity: 0;
         }
         .bald-speech {
             background: #ffffff;
@@ -233,12 +227,12 @@
             padding: 8px 14px;
             border-radius: 16px;
             font-size: 13px;
-            font-weight: 800;
+            font-weight: 900;
             margin-bottom: 8px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             border: 2px solid #cbd5e1;
             text-align: center;
-            max-width: 140px;
+            max-width: 150px;
             position: relative;
         }
         .bald-speech::after {
@@ -252,17 +246,39 @@
             border-color: #ffffff transparent transparent transparent;
         }
         .bald-emoji {
-            font-size: 65px;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+            font-size: 60px;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.4));
+        }
+        .crazy-ambulance {
+            position: fixed;
+            bottom: 20%;
+            left: -200px;
+            font-size: 100px;
+            z-index: 10001;
+            pointer-events: none;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5));
+            animation: driveBy 2s linear forwards;
         }
 
-        @keyframes jumpAndFly {
-            0% { transform: translateY(0) scale(0.5) rotate(-15deg); opacity: 0; }
-            10% { opacity: 1; }
-            30% { transform: translateY(-50vh) scale(1.2) rotate(20deg); }
-            50% { transform: translateY(-40vh) scale(1) rotate(-10deg); }
-            70% { transform: translateY(-80vh) scale(1.1) rotate(15deg); opacity: 1; }
-            100% { transform: translateY(-120vh) scale(1); opacity: 0; }
+        /* Animazioni di corsa panico */
+        @keyframes runRight {
+            0% { transform: translateX(-20vw) translateY(0) rotate(-10deg); opacity: 1; }
+            25% { transform: translateX(25vw) translateY(-30px) rotate(10deg); }
+            50% { transform: translateX(50vw) translateY(0) rotate(-10deg); }
+            75% { transform: translateX(75vw) translateY(-30px) rotate(10deg); }
+            100% { transform: translateX(120vw) translateY(0) rotate(-10deg); opacity: 1; }
+        }
+        @keyframes runLeft {
+            0% { transform: translateX(120vw) translateY(0) rotate(10deg); opacity: 1; }
+            25% { transform: translateX(75vw) translateY(-30px) rotate(-10deg); }
+            50% { transform: translateX(50vw) translateY(0) rotate(10deg); }
+            75% { transform: translateX(25vw) translateY(-30px) rotate(-10deg); }
+            100% { transform: translateX(-20vw) translateY(0) rotate(10deg); opacity: 1; }
+        }
+        @keyframes driveBy {
+            0% { transform: translateX(-20vw) rotate(-5deg); }
+            50% { transform: translateX(50vw) rotate(2deg) scale(1.2); }
+            100% { transform: translateX(120vw) rotate(-5deg); }
         }
 
     </style>
@@ -356,8 +372,7 @@
             
             <div class="selection-area">
                 <div class="selection-title">Seleziona Autisti per l'estrazione</div>
-                <div class="driver-grid" id="driver-selection-list">
-                    </div>
+                <div class="driver-grid" id="driver-selection-list"></div>
             </div>
 
             <div class="wheel-container">
@@ -367,14 +382,13 @@
 
             <button class="btn-spin" id="spin-button" onclick="spinWheel()">GIRA LA RUOTA!</button>
 
-            <div id="winner-display">
-                </div>
+            <div id="winner-display"></div>
 
         </div>
     </div>
 
     <script>
-        // --- LOGICA LOGIN (Nuova Password: 118) ---
+        // --- LOGICA LOGIN ---
         const PWD_CORRETTA = "118";
         const KEY_ACCESSO = "hub_118_auth";
 
@@ -415,29 +429,11 @@
             }
         }
 
-
         // --- LOGICA RUOTA DELLA FORTUNA ---
-        
-        // Lista completa autisti
         const allDrivers = ["Paz", "Yan", "Barbi", "F'bs", "Michy", "Fiffi", "Pilù", "Sgangher", "Stebia"];
+        const wheelColors = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#9333ea', '#0891b2', '#db2777', '#ea580c', '#65a30d'];
         
-        // Palette di colori univoci per ogni autista
-        const wheelColors = [
-            '#2563eb', // Blu
-            '#dc2626', // Rosso
-            '#16a34a', // Verde
-            '#d97706', // Giallo/Arancio
-            '#9333ea', // Viola
-            '#0891b2', // Ciano
-            '#db2777', // Rosa
-            '#ea580c', // Arancione scuro
-            '#65a30d'  // Verde Lime
-        ];
-        
-        // Stato: Partiamo con NESSUN autista selezionato
         let selectedDrivers = [];
-
-        // Variabili per l'animazione
         let canvas = document.getElementById("wheel-canvas");
         let ctx = canvas.getContext("2d");
         let currentAngle = 0; 
@@ -446,7 +442,6 @@
         let friction = 0.985; 
         let stopThreshold = 0.002;
 
-        // Popola la griglia di checkbox
         function populateDriverSelection() {
             const container = document.getElementById('driver-selection-list');
             container.innerHTML = '';
@@ -478,7 +473,6 @@
             });
         }
 
-        // Attiva/Disattiva un autista
         function toggleDriver(driver, color) {
             const checkbox = document.getElementById(`check-${driver}`);
             const optionDiv = document.getElementById(`option-${driver}`);
@@ -503,7 +497,6 @@
             if(navigator.vibrate) navigator.vibrate(20);
         }
 
-        // Disegna la ruota sul Canvas
         function drawWheel() {
             const numSegments = selectedDrivers.length;
             const centerX = canvas.width / 2;
@@ -537,7 +530,6 @@
 
             selectedDrivers.forEach((driver, i) => {
                 const angle = currentAngle + i * arcSize;
-                
                 const originalIndex = allDrivers.indexOf(driver);
                 const sliceColor = wheelColors[originalIndex];
                 
@@ -590,7 +582,6 @@
             ctx.closePath();
         }
 
-        // Avvia la rotazione
         function spinWheel() {
             if (isSpinning || selectedDrivers.length < 2) {
                 if(selectedDrivers.length === 0) alert("Devi selezionare almeno 2 autisti!");
@@ -614,11 +605,8 @@
             spinSpeed *= friction;
             drawWheel();
 
-            if (spinSpeed < stopThreshold) {
-                stopSpin();
-            } else {
-                requestAnimationFrame(animateSpin);
-            }
+            if (spinSpeed < stopThreshold) stopSpin();
+            else requestAnimationFrame(animateSpin);
         }
 
         function stopSpin() {
@@ -640,7 +628,7 @@
             const winnerColor = wheelColors[originalIndex];
             
             displayWinner(winner, winnerColor);
-            triggerBaldMenEasterEgg(); // Avvia i pelati!
+            triggerBaldMenEasterEgg(); 
             
             if(navigator.vibrate) navigator.vibrate([100, 50, 300]);
         }
@@ -679,55 +667,59 @@
             if(navigator.vibrate) navigator.vibrate(30);
         }
 
-        // --- EASTER EGG (Invasione dei Pelati) ---
+        // --- EASTER EGG (Caos in Centrale) ---
         function triggerBaldMenEasterEgg() {
             const funnyPhrases = [
-                "Caffè pagato dal vincitore!",
-                "Ho perso i capelli per questi turni!",
-                "Sono aerodinamico per l'ambulanza!",
-                "Chi mi ha rubato lo shampoo?!",
-                "Lucido come una palla da biliardo!",
-                "Attenzione al riflesso accecante!",
-                "Mettimi un po' di crema solare!",
-                "Tocca a te guidare stanotte!",
-                "La mia testa brilla nel buio!"
+                "Dov'è il mio caffè?! ☕",
+                "Chi ha le chiavi di Falco 27?!",
+                "Non mi pagano abbastanza per questo...",
+                "Ancora un codice rosso?! 🚨",
+                "Ho perso la barella!",
+                "Il navigatore mi ha mandato in un campo!",
+                "È il mio decimo turno di fila! 🧟‍♂️",
+                "Chi ha mangiato la mia merenda?!",
+                "Ninooooo ninooooo! 🚑",
+                "Ho dimenticato il defibrillatore!"
             ];
 
-            // Genera tra 6 e 10 pelati
-            const numMen = 6 + Math.floor(Math.random() * 5); 
+            const numMen = 8 + Math.floor(Math.random() * 5); // Tra 8 e 12 pelati
 
             for(let i = 0; i < numMen; i++) {
-                // Crea un ritardo casuale in modo che non escano tutti insieme
                 setTimeout(() => {
                     const man = document.createElement('div');
                     man.className = 'bald-man';
                     
-                    // Posizione orizzontale casuale (dal 5% al 85% dello schermo)
-                    const leftPos = 5 + Math.random() * 80; 
-                    man.style.left = `${leftPos}%`;
+                    const topPos = 10 + Math.random() * 70; 
+                    man.style.top = `${topPos}%`;
                     
-                    // Durata dell'animazione casuale per sfasare i salti (tra 3.5s e 5.5s)
-                    const duration = 3.5 + Math.random() * 2;
-                    man.style.animationDuration = `${duration}s`;
+                    const goesRight = Math.random() > 0.5;
+                    const duration = 2.5 + Math.random() * 2; 
+                    
+                    man.style.animation = `${goesRight ? 'runRight' : 'runLeft'} ${duration}s linear forwards`;
 
-                    // Scegli una frase a caso
                     const phrase = funnyPhrases[Math.floor(Math.random() * funnyPhrases.length)];
 
                     man.innerHTML = `
                         <div class="bald-speech">${phrase}</div>
-                        <div class="bald-emoji">👨‍🦲</div>
+                        <div class="bald-emoji">👨‍🦲🏃‍♂️</div>
                     `;
 
-                    // Li appendiamo dentro il modale così si vedono in sovraimpressione alla ruota
                     document.getElementById('wheel-modal').appendChild(man);
 
-                    // Pulizia: Rimuovi il pelato dal codice HTML dopo che l'animazione è finita
-                    setTimeout(() => {
-                        man.remove();
-                    }, duration * 1000);
+                    setTimeout(() => { man.remove(); }, duration * 1000);
 
-                }, Math.random() * 1200); // Ritardo di comparsa scaglionato
+                }, Math.random() * 2000); 
             }
+
+            // Aggiungiamo l'ambulanza impazzita che taglia lo schermo dopo 1 secondo!
+            setTimeout(() => {
+                const amb = document.createElement('div');
+                amb.className = 'crazy-ambulance';
+                amb.innerHTML = '🚑💨';
+                document.getElementById('wheel-modal').appendChild(amb);
+                
+                setTimeout(() => { amb.remove(); }, 2000);
+            }, 1000);
         }
 
     </script>
