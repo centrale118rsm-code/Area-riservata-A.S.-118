@@ -28,6 +28,11 @@
             --text-sec: #64748b;
             --border: #e2e8f0;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            
+            /* Colori Ruota */
+            --wheel-color-1: #2563eb; /* Blu */
+            --wheel-color-2: #dc2626; /* Rosso */
+            --wheel-text: #ffffff;
         }
 
         body {
@@ -36,6 +41,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
         /* --- OVERLAY LOGIN --- */
@@ -98,7 +104,7 @@
         .btn-logout:active { transform: scale(0.92); background: rgba(255,255,255,0.25); }
 
         /* --- DASHBOARD CONTENT --- */
-        .dashboard-container { padding: 0 20px 40px; margin-top: -20px; flex: 1; }
+        .dashboard-container { padding: 0 20px 40px; margin-top: -20px; flex: 1; z-index: 10; position: relative; }
         
         .section-title { font-size: 0.8rem; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 10px; }
         
@@ -125,23 +131,97 @@
         .card-richieste .card-icon-wrapper { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
         .card-veicoli .card-icon-wrapper { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
         .card-turni .card-icon-wrapper { background: #dbeafe; color: #2563eb; border: 1px solid #93c5fd; }
-        .card-info .card-icon-wrapper { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
+        /* Nuova card Viola per la ruota */
+        .card-ruota .card-icon-wrapper { background: #e0cffc; color: #6f42c1; border: 1px solid #c29ffa; }
 
-        /* Lista rapida (stile list-view) */
-        .list-menu { display: flex; flex-direction: column; gap: 10px; }
-        .list-item {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
-            padding: 16px; display: flex; align-items: center; gap: 14px; text-decoration: none;
-            color: var(--text-main); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        /* --- MODALE RUOTA DELLA FORTUNA --- */
+        #wheel-modal {
+            position: fixed; inset: 0; background: var(--bg); z-index: 2000;
+            display: none; flex-direction: column; opacity: 0; transition: opacity 0.3s ease;
+            padding-top: env(safe-area-inset-top);
         }
-        .list-item:active { background: var(--bg); transform: scale(0.98); }
-        .list-icon {
-            width: 40px; height: 40px; border-radius: 10px; background: #f1f5f9;
-            display: flex; align-items: center; justify-content: center; color: var(--text-sec);
+        #wheel-modal.open { opacity: 1; display: flex; }
+
+        .wheel-header {
+            padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border); background: #fff;
         }
-        .list-text { flex: 1; }
-        .list-text .l-title { font-weight: 700; font-size: 0.9rem; }
-        .list-text .l-sub { font-size: 0.7rem; color: var(--text-sec); margin-top: 2px; }
+        .wheel-header h2 { font-size: 1.1rem; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; }
+        .btn-close-wheel {
+            background: #f1f5f9; border: none; color: var(--text-sec); width: 36px; height: 36px;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+
+        .wheel-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        /* Area Selezione Autisti */
+        .selection-area { width: 100%; max-width: 400px; background: #fff; border-radius: 20px; padding: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .selection-title { font-size: 0.75rem; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; text-align: center; }
+        
+        .driver-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .driver-option {
+            background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;
+        }
+        .driver-option.active { background: #dbeafe; border-color: #93c5fd; }
+        .driver-option span { font-weight: 700; font-size: 0.85rem; color: var(--text-main); }
+        .driver-option.active span { color: var(--primary-dark); }
+        
+        /* Checkbox switch stilizzato */
+        .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1;
+            transition: .3s; border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(14px); }
+
+        /* Area Ruota Grafica */
+        .wheel-container {
+            position: relative; width: 320px; height: 320px; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* L'indicatore/freccia in alto */
+        .wheel-pointer {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent;
+            border-top: 30px solid #0f172a; z-index: 100; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+        }
+
+        #wheel-canvas {
+            width: 300px; height: 300px; border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 0 0 8px #fff;
+            border: 4px solid #fff;
+            transition: transform 0.1s linear; /* per l'animazione fluida */
+        }
+
+        .btn-spin {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white; border: none; padding: 16px 40px; border-radius: 50px;
+            font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; box-shadow: 0 8px 20px rgba(30,58,138,0.4);
+            transition: all 0.2s;
+        }
+        .btn-spin:active { transform: scale(0.95); box-shadow: 0 4px 10px rgba(30,58,138,0.4); }
+        .btn-spin:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
+
+        /* Risultato */
+        #winner-display {
+            margin-top: 20px; text-align: center; min-height: 60px;
+            padding: 15px; border-radius: 15px; width: 100%; max-width: 320px;
+        }
+        #winner-display.show { background: #dcfce7; border: 2px solid #86efac; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        .winner-label { font-size: 0.7rem; font-weight: 800; color: #16a34a; text-transform: uppercase; letter-spacing: 1px; }
+        .winner-name { font-size: 1.6rem; font-weight: 900; color: #15803d; letter-spacing: -1px; }
+
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
     </style>
 </head>
@@ -187,15 +267,15 @@
         
         <div class="grid-menu">
             
-            <a href="https://centrale118rsm-code.github.io/Richieste-A.S.-118/" class="menu-card card-richieste">
-    <div class="card-icon-wrapper">
-        <span class="material-icons-round" style="font-size: 26px;">edit_calendar</span>
-    </div>
-    <div class="title">Richieste<br>(Paz)</div>
-    <div class="desc">Cambi turno, ferie, permessi e comunicazioni.</div>
-</a>
+            <a href="https://centrale118rsm-code.github.io/Richieste-Paz/index.html" class="menu-card card-richieste">
+                <div class="card-icon-wrapper">
+                    <span class="material-icons-round" style="font-size: 26px;">edit_calendar</span>
+                </div>
+                <div class="title">Richieste<br>(Paz)</div>
+                <div class="desc">Cambi turno, ferie, permessi e comunicazioni.</div>
+            </a>
 
-            <a href="https://centrale118rsm-code.github.io/Veicoli-118/" class="menu-card card-veicoli">
+            <a href="https://centrale118rsm-code.github.io/Gestione-Veicoli/index.html" class="menu-card card-veicoli">
                 <div class="card-icon-wrapper">
                     <span class="material-icons-round" style="font-size: 26px;">airport_shuttle</span>
                 </div>
@@ -211,35 +291,61 @@
                 <div class="desc">Consulta il tabellone turni aggiornato.</div>
             </a>
 
-        </div>
-
-        <div class="section-title">Link Rapidi</div>
-        <div class="list-menu">
-            <a href="https://centrale118rsm-code.github.io/Turni-Infermieri-2026/" class="list-item">
-                <div class="list-icon"><span class="material-icons-round">medical_services</span></div>
-                <div class="list-text">
-                    <div class="l-title">Turni Infermieri</div>
-                    <div class="l-sub">Visualizza il tabellone infermieri</div>
+            <div class="menu-card card-ruota" onclick="openWheelModal()">
+                <div class="card-icon-wrapper">
+                    <span class="material-icons-round" style="font-size: 26px;">casino</span>
                 </div>
-                <span class="material-icons-round" style="color:var(--border)">chevron_right</span>
-            </a>
+                <div class="title">Ruota del<br>Destino</div>
+                <div class="desc">Estrai a sorte un autista tra quelli selezionati.</div>
+            </div>
+
         </div>
 
     </div>
 
+    <div id="wheel-modal">
+        <div class="wheel-header">
+            <h2><span class="material-icons-round" style="vertical-align:middle; margin-right:5px; color:#6f42c1;">casino</span>Ruota del Destino</h2>
+            <button class="btn-close-wheel" onclick="closeWheelModal()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        
+        <div class="wheel-content">
+            
+            <div class="selection-area">
+                <div class="selection-title">Seleziona Autisti da includere</div>
+                <div class="driver-grid" id="driver-selection-list">
+                    </div>
+            </div>
+
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheel-canvas" width="600" height="600"></canvas>
+            </div>
+
+            <button class="btn-spin" id="spin-button" onclick="spinWheel()">GIRA!</button>
+
+            <div id="winner-display">
+                </div>
+
+        </div>
+    </div>
+
     <script>
-        const PWD_CORRETTA = "118";
+        // --- LOGICA LOGIN ---
+        const PWD_CORRETTA = "autisti2026";
         const KEY_ACCESSO = "hub_118_auth";
 
-        // Al caricamento, controlla se c'è già il salvataggio
         window.onload = () => {
             if (localStorage.getItem(KEY_ACCESSO) === "true") {
-                // Se è già loggato, nascondi subito l'overlay
                 document.getElementById('login-overlay').style.display = 'none';
             } else {
-                // Altrimenti focalizza l'input
                 document.getElementById('pwd-input').focus();
             }
+            // Inizializza la lista dei driver nella ruota
+            populateDriverSelection();
+            drawWheel();
         };
 
         function checkPassword() {
@@ -248,38 +354,267 @@
             const overlay = document.getElementById('login-overlay');
 
             if (inputVal === PWD_CORRETTA) {
-                // Salva nel browser
                 localStorage.setItem(KEY_ACCESSO, "true");
-                
-                // Animazione di scomparsa
                 overlay.style.opacity = "0";
-                setTimeout(() => {
-                    overlay.style.display = "none";
-                }, 400); // tempo uguale alla transition nel css
-                
+                setTimeout(() => { overlay.style.display = "none"; }, 400);
                 if(navigator.vibrate) navigator.vibrate(50);
             } else {
-                // Password errata
                 errorMsg.style.display = "block";
-                if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // vibrazione errore
-                document.getElementById('pwd-input').value = ""; // pulisci input
+                if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                document.getElementById('pwd-input').value = "";
             }
         }
 
-        // Permette di premere "Invio" sulla tastiera per accedere
-        function handleEnter(e) {
-            if (e.key === "Enter") {
-                checkPassword();
-            }
-        }
+        function handleEnter(e) { if (e.key === "Enter") checkPassword(); }
 
         function logout() {
             if(confirm("Vuoi uscire dall'area riservata?")) {
                 if(navigator.vibrate) navigator.vibrate(30);
-                localStorage.removeItem(KEY_ACCESSO); // Cancella il salvataggio
-                location.reload(); // Ricarica la pagina per far riapparire il login
+                localStorage.removeItem(KEY_ACCESSO);
+                location.reload();
             }
         }
+
+        // --- LOGICA RUOTA DELLA FORTUNA ---
+        
+        // Lista completa autisti
+        const allDrivers = ["Paz", "Yan", "Barbi", "F'bs", "Michy", "Fiffi", "Pilù", "Sgangher", "Stebia"];
+        
+        // Stato: quali autisti sono selezionati (inizialmente tutti)
+        let selectedDrivers = [...allDrivers];
+
+        // Variabili per l'animazione
+        let canvas = document.getElementById("wheel-canvas");
+        let ctx = canvas.getContext("2d");
+        let currentAngle = 0; // Angolo attuale della ruota
+        let isSpinning = false;
+        let spinSpeed = 0;
+        let friction = 0.985; // Attrito per rallentare (più vicino a 1 = gira di più)
+        let stopThreshold = 0.002;
+
+        // Popola la griglia di checkbox
+        function populateDriverSelection() {
+            const container = document.getElementById('driver-selection-list');
+            container.innerHTML = '';
+
+            allDrivers.forEach(driver => {
+                const isChecked = selectedDrivers.includes(driver);
+                
+                const optionDiv = document.createElement('div');
+                optionDiv.className = `driver-option ${isChecked ? 'active' : ''}`;
+                optionDiv.id = `option-${driver}`;
+                optionDiv.onclick = (e) => {
+                    // Evita il trigger doppio se clicchi sullo slider
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN' && e.target.className !== 'slider') {
+                        toggleDriver(driver);
+                    }
+                };
+
+                optionDiv.innerHTML = `
+                    <span>${driver}</span>
+                    <label class="switch">
+                        <input type="checkbox" id="check-${driver}" ${isChecked ? 'checked' : ''} onchange="toggleDriver('${driver}')">
+                        <span class="slider"></span>
+                    </label>
+                `;
+                container.appendChild(optionDiv);
+            });
+        }
+
+        // Attiva/Disattiva un autista
+        function toggleDriver(driver) {
+            const checkbox = document.getElementById(`check-${driver}`);
+            const optionDiv = document.getElementById(`option-${driver}`);
+            
+            // Se l'evento arriva dal div, sincronizza il checkbox
+            if (event.target.tagName !== 'INPUT') {
+                checkbox.checked = !checkbox.checked;
+            }
+
+            if (checkbox.checked) {
+                if (!selectedDrivers.includes(driver)) selectedDrivers.push(driver);
+                optionDiv.classList.add('active');
+            } else {
+                selectedDrivers = selectedDrivers.filter(d => d !== driver);
+                optionDiv.classList.remove('active');
+            }
+            
+            // Reset risultato precedente e ridisegna
+            resetWinnerDisplay();
+            drawWheel();
+            if(navigator.vibrate) navigator.vibrate(20);
+        }
+
+        // Disegna la ruota sul Canvas
+        function drawWheel() {
+            const numSegments = selectedDrivers.length;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = centerX - 10; // Leggero margine
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (numSegments === 0) {
+                // Messaggio se nessuno è selezionato
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.font = 'bold 30px Inter';
+                ctx.fillStyle = '#64748b';
+                ctx.textAlign = 'center';
+                ctx.fillText("Seleziona", 0, -15);
+                ctx.fillText("Autisti", 0, 25);
+                ctx.restore();
+                return;
+            }
+
+            const arcSize = (2 * Math.PI) / numSegments;
+
+            selectedDrivers.forEach((driver, i) => {
+                const angle = currentAngle + i * arcSize;
+                
+                // 1. Disegna lo spicchio
+                ctx.beginPath();
+                ctx.fillStyle = (i % 2 === 0) ? '#2563eb' : '#dc2626'; // Alterna Blu e Rosso 118
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
+                ctx.lineTo(centerX, centerY);
+                ctx.fill();
+                ctx.closePath();
+
+                // 2. Aggiungi il testo (Nome)
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                // Ruota il contesto per scrivere dritto dentro lo spicchio
+                ctx.rotate(angle + arcSize / 2);
+                
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#ffffff";
+                // Dimensione font dinamica in base a quanti spicchi ci sono
+                let fontSize = 32;
+                if (numSegments > 6) fontSize = 26;
+                if (numSegments > 9) fontSize = 22;
+                
+                ctx.font = `900 ${fontSize}px Inter`;
+                
+                // Scrivi il nome spostato verso l'esterno
+                ctx.fillText(driver, radius - 30, 10);
+                ctx.restore();
+            });
+            
+            // Disegna cerchio centrale decorativo
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#0f172a';
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+        // Avvia la rotazione
+        function spinWheel() {
+            if (isSpinning || selectedDrivers.length < 2) {
+                if(selectedDrivers.length < 2) alert("Seleziona almeno 2 autisti per girare!");
+                return;
+            }
+            
+            resetWinnerDisplay();
+            isSpinning = true;
+            document.getElementById('spin-button').disabled = true;
+            
+            // Velocità iniziale casuale alta (tra 0.3 e 0.6 radianti per frame)
+            spinSpeed = Math.random() * 0.3 + 0.4;
+            
+            if(navigator.vibrate) navigator.vibrate([30, 30, 30]);
+
+            animateSpin();
+        }
+
+        // Ciclo di animazione
+        function animateSpin() {
+            if (!isSpinning) return;
+
+            // Aggiorna angolo basato sulla velocità
+            currentAngle += spinSpeed;
+            // Applica attrito
+            spinSpeed *= friction;
+
+            drawWheel();
+
+            // Controllo arresto
+            if (spinSpeed < stopThreshold) {
+                stopSpin();
+            } else {
+                requestAnimationFrame(animateSpin);
+            }
+        }
+
+        // Ferma la ruota e calcola vincitore
+        function stopSpin() {
+            isSpinning = false;
+            spinSpeed = 0;
+            document.getElementById('spin-button').disabled = false;
+            
+            const numSegments = selectedDrivers.length;
+            const arcSize = (2 * Math.PI) / numSegments;
+
+            // Normalizza l'angolo attuale tra 0 e 2PI
+            let normalizedAngle = currentAngle % (2 * Math.PI);
+            if (normalizedAngle < 0) normalizedAngle += (2 * Math.PI);
+
+            // Il puntatore è in alto (angolo = -PI/2 o 3PI/2). 
+            // Dobbiamo calcolare quale spicchio si trova sotto il puntatore.
+            // La logica è: l'angolo 0 del canvas è a destra (est). Il puntatore è a Nord.
+            // Quindi cerchiamo lo spicchio all'angolo (3/2 PI - normalizedAngle)
+            
+            let winningIndex = Math.floor(((3 * Math.PI / 2) - normalizedAngle) / arcSize);
+            
+            // Correggi l'indice se negativo
+            winningIndex = (winningIndex % numSegments + numSegments) % numSegments;
+            
+            const winner = selectedDrivers[winningIndex];
+            displayWinner(winner);
+            
+            // Evidenzia visivamente lo spicchio vincente (opzionale, ridisegnando con opacità)
+            // Per ora usiamo vibrazione e display
+            if(navigator.vibrate) navigator.vibrate([100, 50, 300]);
+        }
+
+        function displayWinner(name) {
+            const display = document.getElementById('winner-display');
+            display.innerHTML = `
+                <div class="winner-label">Il destino ha scelto:</div>
+                <div class="winner-name">${name}</div>
+            `;
+            display.classList.add('show');
+        }
+
+        function resetWinnerDisplay() {
+            const display = document.getElementById('winner-display');
+            display.innerHTML = '';
+            display.classList.remove('show');
+        }
+
+        // Gestione apertura/chiusura modale
+        function openWheelModal() {
+            document.getElementById('wheel-modal').classList.add('open');
+            // Blocca lo scroll del body sotto
+            document.body.style.overflow = 'hidden';
+            resetWinnerDisplay();
+            drawWheel(); // Ridisegna per sicurezza
+            if(navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function closeWheelModal() {
+            // Se sta girando, non chiudere
+            if(isSpinning) return;
+            document.getElementById('wheel-modal').classList.remove('open');
+            // Riattiva lo scroll del body
+            document.body.style.overflow = '';
+            if(navigator.vibrate) navigator.vibrate(30);
+        }
+
     </script>
 </body>
 </html>
