@@ -497,15 +497,16 @@
             if(navigator.vibrate) navigator.vibrate(20);
         }
 
+        // NUOVA FUNZIONE drawWheel: Ripete gli spicchi finché non sono almeno 12
         function drawWheel() {
-            const numSegments = selectedDrivers.length;
+            const numSelected = selectedDrivers.length;
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = centerX - 10; 
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (numSegments === 0) {
+            if (numSelected === 0) {
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 ctx.font = '900 28px Inter';
@@ -526,9 +527,14 @@
                 return;
             }
 
-            const arcSize = (2 * Math.PI) / numSegments;
+            // LOGICA DI RIPETIZIONE: Almeno 12 spicchi totali per fare una bella ruota
+            const minSegments = 12;
+            const repetitions = Math.max(1, Math.ceil(minSegments / numSelected));
+            const totalSegments = numSelected * repetitions;
+            const arcSize = (2 * Math.PI) / totalSegments;
 
-            selectedDrivers.forEach((driver, i) => {
+            for (let i = 0; i < totalSegments; i++) {
+                const driver = selectedDrivers[i % numSelected]; // Ripete gli autisti in modo circolare
                 const angle = currentAngle + i * arcSize;
                 const originalIndex = allDrivers.indexOf(driver);
                 const sliceColor = wheelColors[originalIndex];
@@ -553,8 +559,9 @@
                 ctx.fillStyle = "#ffffff";
                 
                 let fontSize = 32;
-                if (numSegments > 5) fontSize = 26;
-                if (numSegments > 7) fontSize = 22;
+                if (totalSegments > 5) fontSize = 26;
+                if (totalSegments > 7) fontSize = 22;
+                if (totalSegments > 12) fontSize = 18; // Testo un po' più piccolo se ci sono tanti spicchi
                 
                 ctx.font = `900 ${fontSize}px Inter`;
                 ctx.shadowColor = "rgba(0,0,0,0.3)";
@@ -564,8 +571,9 @@
                 
                 ctx.fillText(driver, radius - 35, 8);
                 ctx.restore();
-            });
+            }
             
+            // Centro della ruota
             ctx.beginPath();
             ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI);
             ctx.fillStyle = '#ffffff';
@@ -609,21 +617,27 @@
             else requestAnimationFrame(animateSpin);
         }
 
+        // NUOVA FUNZIONE stopSpin: Adattata per i segmenti ripetuti
         function stopSpin() {
             isSpinning = false;
             spinSpeed = 0;
             document.getElementById('spin-button').disabled = false;
             
-            const numSegments = selectedDrivers.length;
-            const arcSize = (2 * Math.PI) / numSegments;
+            const numSelected = selectedDrivers.length;
+            const minSegments = 12;
+            const repetitions = Math.max(1, Math.ceil(minSegments / numSelected));
+            const totalSegments = numSelected * repetitions;
+            const arcSize = (2 * Math.PI) / totalSegments;
 
             let normalizedAngle = currentAngle % (2 * Math.PI);
             if (normalizedAngle < 0) normalizedAngle += (2 * Math.PI);
             
+            // Calcola lo spicchio vincente basandosi sui segmenti totali
             let winningIndex = Math.floor(((3 * Math.PI / 2) - normalizedAngle) / arcSize);
-            winningIndex = (winningIndex % numSegments + numSegments) % numSegments;
+            winningIndex = (winningIndex % totalSegments + totalSegments) % totalSegments;
             
-            const winner = selectedDrivers[winningIndex];
+            // Risale all'autista originale tramite il modulo
+            const winner = selectedDrivers[winningIndex % numSelected];
             const originalIndex = allDrivers.indexOf(winner);
             const winnerColor = wheelColors[originalIndex];
             
@@ -667,19 +681,22 @@
             if(navigator.vibrate) navigator.vibrate(30);
         }
 
-        // --- EASTER EGG (Caos in Centrale) ---
+        // NUOVA FUNZIONE EASTER EGG: Omini lenti e frasi divertenti!
         function triggerBaldMenEasterEgg() {
             const funnyPhrases = [
-                "Dov'è il mio caffè?! ☕",
+                "Febbre a 37.1 da due ore! CODICE ROSSO! 🚨",
+                "Scusi, fate anche da taxi per la farmacia? 🚕",
+                "Ho un'unghia incarnita dal 2018, muovetevi! 👣",
+                "Ma usate le sirene per saltare la coda, ammettetelo! 🤫",
+                "Il paziente si è addormentato mentre lo barellavamo...",
+                "Ha chiamato il 118 perché ha finito le sigarette! 🚬",
+                "Portatemi in PS, ho un brufolo sospetto! 🦸‍♂️",
+                "Codice Nero: mi si è scaricato il telefono! 📱",
+                "Mal di pancia... ho mangiato solo 3 teglie di lasagne! 🍝",
                 "Chi ha le chiavi di Falco 27?!",
-                "Non mi pagano abbastanza per questo...",
-                "Ancora un codice rosso?! 🚨",
-                "Ho perso la barella!",
-                "Il navigatore mi ha mandato in un campo!",
-                "È il mio decimo turno di fila! 🧟‍♂️",
-                "Chi ha mangiato la mia merenda?!",
-                "Ninooooo ninooooo! 🚑",
-                "Ho dimenticato il defibrillatore!"
+                "Dov'è il mio caffè?! ☕",
+                "Il navigatore mi ha mandato in un campo agricolo!",
+                "Non mi pagano abbastanza per questo... 🧟‍♂️"
             ];
 
             const numMen = 8 + Math.floor(Math.random() * 5); // Tra 8 e 12 pelati
@@ -693,7 +710,9 @@
                     man.style.top = `${topPos}%`;
                     
                     const goesRight = Math.random() > 0.5;
-                    const duration = 2.5 + Math.random() * 2; 
+                    
+                    // OMINI PIÙ LENTI: la durata ora va da 6 a 10 secondi!
+                    const duration = 6 + Math.random() * 4; 
                     
                     man.style.animation = `${goesRight ? 'runRight' : 'runLeft'} ${duration}s linear forwards`;
 
@@ -706,19 +725,21 @@
 
                     document.getElementById('wheel-modal').appendChild(man);
 
+                    // Rimuove l'omino alla fine dell'animazione
                     setTimeout(() => { man.remove(); }, duration * 1000);
 
                 }, Math.random() * 2000); 
             }
 
-            // Aggiungiamo l'ambulanza impazzita che taglia lo schermo dopo 1 secondo!
+            // Ambulanza impazzita più lenta (durata modificata a 4 secondi)
             setTimeout(() => {
                 const amb = document.createElement('div');
                 amb.className = 'crazy-ambulance';
                 amb.innerHTML = '🚑💨';
+                amb.style.animationDuration = '4s'; // Rallenta l'ambulanza
                 document.getElementById('wheel-modal').appendChild(amb);
                 
-                setTimeout(() => { amb.remove(); }, 2000);
+                setTimeout(() => { amb.remove(); }, 4000);
             }, 1000);
         }
 
